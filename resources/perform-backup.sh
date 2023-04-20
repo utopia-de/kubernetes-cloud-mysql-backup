@@ -3,7 +3,6 @@
 # Set the has_failed variable to false. This will change if any of the subsequent database backups/uploads fail.
 has_failed=false
 
-
 cleanup_old_data() {
     if [ -n "${DB_CLEANUP_TIME}" ]; then
         if [ "${has_failed}" != true ]; then
@@ -15,11 +14,11 @@ cleanup_old_data() {
                 s3_createdate=$(echo $s3_file | awk {'print $1" "$2'})
                 s3_createdate=$(date -d "$s3_createdate" "+%s")
                 s3_olderthan=$(echo $(( $(date +%s)-${DB_CLEANUP_TIME}*60 )))
-                if [[ $s3_createdate -le $s3_olderthan ]] ; then
+                if [ $s3_createdate -le $s3_olderthan ] ; then
                     s3_filename=$(echo $s3_file | awk {'print $4'})
                     if [ "$s3_filename" != "" ] ; then
                         echo -e "Deleting $s3_filename"
-                         s3cmd ${AWS_CONNECT} rm s3://${AWS_BUCKET_NAME}/${AWS_BUCKET_BACKUP_PATH}/${s3_filename}
+                         s3cmd ${AWS_CONNECT} rm ${s3_filename}
                     fi
                 fi
             done
